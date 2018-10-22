@@ -108,3 +108,25 @@ def msd_for_df(df, group_list=[]):
 def add_msd_grouped(df, group_list):
     """Returns msd for each frame separating according to columns listed in group_list."""
     return df.groupby(group_list).apply(msd_for_df, group_list=group_list)
+
+
+def relabel_by_track(labeled_mask, track_df):
+    """Relabels according to particle column in track_df every frame of labeled_mask according to track_df."""
+    out = np.zeros_like(labeled_mask)
+    for frame, df in track_df.groupby('frame'):
+        swap = [[df.particle[i], df.label[i]] for i in df.index]
+
+        out[frame] = relabel(labeled_mask[frame], swap)
+
+    return out
+
+
+def relabel(labeled, swap):
+    """Takes a labeled mask and a list of tuples of the swapping labels. If a label is not swapped, it will be
+    deleted."""
+    out = np.zeros_like(labeled)
+
+    for new, old in swap:
+        out[labeled == old] = new
+
+    return out
