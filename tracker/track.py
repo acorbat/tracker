@@ -30,6 +30,7 @@ def track(labeled_stack, max_dist=20, gap=1, extra_attrs=None, intensity_image=N
     if subtr_drift:
         elements = subtract_drift(elements)
     elements['particle'] += 1
+    elements.reset_index(inplace=True, drop=True)
 
     return elements
 
